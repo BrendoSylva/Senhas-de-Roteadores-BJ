@@ -4,24 +4,68 @@
   <meta charset="UTF-8">
   <title>Árvore de Decisão - Suporte Técnico</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    .hidden { display: none; }
-    button { margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #F5F5F5;
+      color: #333333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #FFFFFF;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h2 {
+      color: #0057A0;
+    }
+
+    button {
+      background-color: #0057A0;
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px 5px 0 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #00AEEF;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #0057A0;
+    }
   </style>
 </head>
 <body>
-
-  <h2>Árvore de Decisão - Suporte Técnico</h2>
-  <div id="perguntas"></div>
-  <button onclick="iniciar()">Iniciar Atendimento</button>
-  <p id="resultado"></p>
+  <div class="container">
+    <h2>Árvore de Decisão - Suporte Técnico</h2>
+    <div id="perguntas"></div>
+    <button onclick="iniciar()">Iniciar Atendimento</button>
+    <p id="resultado"></p>
+  </div>
 
   <script>
     const perguntas = [
       { texto: "Cliente reincidente em reclamar de sua conexão?", tipo: "simnao", decisao: "sim" },
       { texto: "Sinal RX e TX entre -10 e -27 dentro do padrão?", tipo: "simnao", decisao: "não" },
       { texto: "Muitos logs de desconexões?", tipo: "simnao", decisao: "sim" },
-      { texto: "Equipamento do cliente está na Anlix?", tipo: "simnao", decisao: "não", extra: "Qual é o equipamento?" },
+      { texto: "Equipamento do cliente está na Anlix?", tipo: "simnao", decisao: "não", equipamento: true },
       { texto: "Como está a qualidade do Wi-Fi?", tipo: "opcoes", opcoes: ["boa", "media", "ruim"] },
       { texto: "Fez o teste de latência e perda? Houve alguma falha?", tipo: "simnao", decisao: "sim" },
       { texto: "Teste de velocidade próximo do contrato do cliente?", tipo: "simnao", decisao: "não" }
@@ -68,17 +112,33 @@
         return;
       }
 
-      if (p.extra && resposta === "não") {
-        const input = prompt(p.extra);
-        if (input) {
-          console.log("Equipamento informado:", input);
-        }
+      // Se for a pergunta da Anlix e a resposta for "não", mostra os equipamentos e pausa
+      if (p.equipamento && resposta === "não") {
+        container.innerHTML = `<p>Qual é o equipamento?</p>`;
+        const equipamentos = ["Nokia", "Maxprint", "D-link", "TP-link", "Mercusys"];
+        equipamentos.forEach(eq => {
+          container.innerHTML += `<button onclick="responderEquipamento('${eq}')">${eq}</button>`;
+        });
+        return;
+      }
+
+      indice++;
+      fazerPergunta();
+    }
+
+    function responderEquipamento(nome) {
+      console.log("Equipamento selecionado:", nome);
+
+      const equipamentosCriticos = ["Maxprint", "Mercusys"];
+      if (equipamentosCriticos.includes(nome)) {
+        resultado.textContent = `Equipamento ${nome} com histórico de problemas. Encaminhar ao N2.`;
+        container.innerHTML = "";
+        return;
       }
 
       indice++;
       fazerPergunta();
     }
   </script>
-
 </body>
 </html>
