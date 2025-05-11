@@ -12,25 +12,32 @@
       color: #333;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       min-height: 100vh;
-      background-image: url('sua-imagem-de-fundo.jpg'); /* Altere para o caminho da sua imagem */
+      background-image: url('sua-imagem-de-fundo.jpg'); /* Altere para o caminho da sua imagem de fundo */
       background-size: cover;
       background-position: center;
     }
 
     .container {
+      width: 100%;
       max-width: 700px;
-      background: rgba(255, 255, 255, 0.8); /* Fundo translúcido para não perder legibilidade */
-      margin-top: 40px;
+      background: rgba(255, 255, 255, 0.9);
       padding: 30px;
       border-radius: 8px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-sizing: border-box;
     }
 
     h1 {
       text-align: center;
       color: #0056b3;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 200px;
     }
 
     .step {
@@ -44,7 +51,6 @@
 
     button {
       margin-top: 10px;
-      margin-right: 10px;
       padding: 8px 16px;
       background-color: #0056b3;
       color: white;
@@ -71,12 +77,19 @@
       margin-top: 10px;
       margin-bottom: 10px;
     }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     <h1>Árvore de Decisão - Suporte Técnico</h1>
+    <img src="mmega.png" alt="Logo Megalink Telecom" class="logo">
+
     <form id="decisionTreeForm">
       <div class="step active" id="step1">
         <p>Cliente reincidente em reclamar de sua conexão?</p>
