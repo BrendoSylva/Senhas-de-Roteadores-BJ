@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Árvore de Decisão - Suporte Técnico</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('sua-imagem-de-fundo.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+    h1 {
+      text-align: center;
+      color: #0056b3;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 200px;
+    }
+    .step {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .step.active {
+      display: block;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004494;
+    }
+    #report {
+      white-space: pre-wrap;
+      background-color: #f1f1f1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+    select, input[type="text"], input[type="file"] {
+      padding: 8px;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Árvore de Decisão - Suporte Técnico</h1>
+    <img src="mmega.png" alt="Logo Megalink Telecom" class="logo">
+    <form id="decisionTreeForm">
+      <div class="step active" id="step1">
+        <p>Cliente reincidente em reclamar de sua conexão?</p>
+        <input type="file" id="file-step1" required>
+        <button type="button" onclick="checkAttachmentAndGo('file-step1','Sim','step1','n2')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo('file-step1','Não','step1','step2')">Não</button>
+      </div>
+      <div class="step" id="step2">
+        <p>Sinal RX e TX entre -10 e -27 dentro do padrão?</p>
+        <input type="file" id="file-step2" required>
+        <button type="button" onclick="checkAttachmentAndGo('file-step2','Sim','step2','step3')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo('file-step2','Não','step2','n2')">Não</button>
+      </div>
+      <div class="step" id="step3">
+        <p>Muitos logs de Desconexões?</p>
+        <input type="file" id="file-step3" required>
+        <button type="button" onclick="checkAttachmentAndGo('file-step3','Sim','step3','n2')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo('file-step3','Não','step3','step4')">Não</button>
+      </div>
+      <div class="step" id="step4">
+        <p>Equipamento do cliente está na Anlix?</p>
+        <button type="button" onclick="recordAndGo('Sim', 'step4', 'step5')">Sim</button>
+        <button type="button" onclick="recordAndGo('Não', 'step4', 'step4b')">Não</button>
+      </div>
+      <div class="step" id="step4b">
+        <p>Selecione o equipamento:</p>
+        <select id="equipSelect" onchange="checkOther(this)">
+          <option value="">-- Escolha --</option>
+          <option>Nokia</option>
+          <option>TP-Link</option>
+          <option>D-Link</option>
+          <option>Mercusys</option>
+          <option>Outros</option>
+        </select>
+        <div id="otherDevice" style="display:none;">
+          <p>Informe o nome do equipamento:</p>
+          <input type="text" id="otherName" />
+        </div>
+        <input type="file" id="file-step4b" required>
+        <button type="button" onclick="checkAttachmentAndGo('file-step4b', 'Equipamento encaminhado', 'step4b', 'n2', true)">Encaminhar ao N2</button>
+      </div>
+      <div class="step" id="step5">
+        <p>Como está a qualidade do wi-fi?</p>
+        <label><input type="radio" name="wifi" value="Boa"> Boa</label><br>
+        <label><input type="radio" name="wifi" value="Média"> Média</label><br>
+        <label><input type="radio" name="wifi" value="Ruim"> Ruim</label><br>
+        <input type="file" id="file-step5" required>
+        <button type="button" onclick="handleWiFi()">Próximo</button>
+      </div>
+      <div class="step" id="step6">
+        <p>Fez o teste de latência e perda e houve alguma falha?</p>
+        <input type="file" id="file-step6" required>
+        <button type="button" onclick="checkAttachmentAndGo('file-step6','Sim','step6','n2')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo('file-step6','Não','step6','step7')">Não</button>
+      </div>
+      <div class="step" id="step7">
+        <p>Teste de velocidade próximo do contrato do cliente?</p>
+        <input type="file" id="file-step7" required>
+        <button type="button" onclick="checkAttachmentAndGo('file-step7','Sim','step7','final')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo('file-step7','Não','step7','n2')">Não</button>
+      </div>
+      <div class="step" id="final">
+        <p><strong>Faça a abertura de protocolo aguardando análise e encaminhe ao N2.</strong></p>
+        <div id="report"></div>
+        <button type="button" onclick="baixarRelatorio()">Baixar Relatório</button>
+        <button type="button" onclick="restartTree()">Reiniciar Árvore</button>
+      </div>
+      <div class="step" id="n2">
+        <p><strong>Encaminhar ao N2.</strong></p>
+        <div id="report"></div>
+        <button type="button" onclick="baixarRelatorio()">Baixar Relatório</button>
+        <button type="button" onclick="restartTree()">Reiniciar Árvore</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    const respostas = [];
+
+    function showNextStep(stepId) {
+      document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+      if (stepId === 'n2' || stepId === 'final') gerarRelatorio();
+    }
+
+    function recordAndGo(resposta, perguntaId, proximo) {
+      const perguntaTexto = document.querySelector(`#${perguntaId} p`).innerText;
+      respostas.push({ pergunta: perguntaTexto, resposta: resposta });
+      showNextStep(proximo);
+    }
+
+    function checkAttachmentAndGo(fileInputId, resposta, perguntaId, proximo, skipQuestion = false) {
+      const fileInput = document.getElementById(fileInputId);
+      if (!fileInput || !fileInput.files.length) {
+        alert("Anexe um arquivo antes de continuar.");
+        return;
+      }
+      if (skipQuestion) {
+        respostas.push({ pergunta: perguntaId, resposta: resposta });
+        showNextStep(proximo);
+      } else {
+        recordAndGo(resposta, perguntaId, proximo);
+      }
+    }
+
+    function handleEquipamento() {
+      const select = document.getElementById("equipSelect");
+      let valor = select.value;
+      if (!valor) return alert("Selecione um equipamento.");
+      if (valor === "Outros") {
+        const outro = document.getElementById("otherName").value.trim();
+        if (!outro) return alert("Informe o nome do equipamento.");
+        valor = "Outros: " + outro;
+      }
+      respostas.push({ pergunta: "Equipamento informado:", resposta: valor });
+    }
+
+    function handleWiFi() {
+      const opcao = document.querySelector('input[name="wifi"]:checked');
+      const fileInput = document.getElementById("file-step5");
+      if (!opcao) return alert("Selecione uma qualidade de Wi-Fi.");
+      if (!fileInput.files.length) return alert("Anexe um arquivo antes de continuar.");
+      respostas.push({ pergunta: "Qualidade do Wi-Fi:", resposta: opcao.value });
+      showNextStep('step6');
+    }
+
+    function checkOther(select) {
+      const other = document.getElementById("otherDevice");
+      other.style.display = (select.value === "Outros") ? "block" : "none";
+    }
+
+    function gerarRelatorio() {
+      const area = document.getElementById("report");
+      let texto = "📋 Relatório de Atendimento\n\n";
+      respostas.forEach((item, i) => {
+        texto += `${i + 1}. ${item.pergunta}\n   → ${item.resposta}\n`;
+      });
+      area.textContent = texto;
+    }
+
+    function baixarRelatorio() {
+      let texto = "Relatório de Atendimento\n\n";
+      respostas.forEach((item, i) => {
+        texto += `${i + 1}. ${item.pergunta}\n   → ${item.resposta}\n`;
+      });
+      const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "relatorio_atendimento.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function restartTree() {
+      respostas.length = 0;
+      document.getElementById("decisionTreeForm").reset();
+      document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+      document.getElementById("step1").classList.add('active');
+      document.getElementById("otherDevice").style.display = "none";
+      document.getElementById("report").textContent = "";
+    }
+  </script>
+</body>
+</html>
