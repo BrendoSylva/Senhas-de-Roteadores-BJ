@@ -62,7 +62,7 @@
       border: 1px solid #ccc;
       margin-top: 20px;
     }
-    select, input[type="text"], input[type="file"] {
+    select, input[type="text"] {
       padding: 8px;
       width: 100%;
       margin-top: 10px;
@@ -81,21 +81,18 @@
     <form id="decisionTreeForm">
       <div class="step active" id="step1">
         <p>Cliente reincidente em reclamar de sua conexão?</p>
-        <input type="file" id="file-step1" required>
-        <button type="button" onclick="checkAttachmentAndGo('file-step1','Sim','step1','n2')">Sim</button>
-        <button type="button" onclick="checkAttachmentAndGo('file-step1','Não','step1','step2')">Não</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Sim','step1','n2')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Não','step1','step2')">Não</button>
       </div>
       <div class="step" id="step2">
         <p>Sinal RX e TX entre -10 e -27 dentro do padrão?</p>
-        <input type="file" id="file-step2" required>
-        <button type="button" onclick="checkAttachmentAndGo('file-step2','Sim','step2','step3')">Sim</button>
-        <button type="button" onclick="checkAttachmentAndGo('file-step2','Não','step2','n2')">Não</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Sim','step2','step3')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Não','step2','n2')">Não</button>
       </div>
       <div class="step" id="step3">
         <p>Muitos logs de Desconexões?</p>
-        <input type="file" id="file-step3" required>
-        <button type="button" onclick="checkAttachmentAndGo('file-step3','Sim','step3','n2')">Sim</button>
-        <button type="button" onclick="checkAttachmentAndGo('file-step3','Não','step3','step4')">Não</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Sim','step3','n2')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Não','step3','step4')">Não</button>
       </div>
       <div class="step" id="step4">
         <p>Equipamento do cliente está na Anlix?</p>
@@ -116,28 +113,24 @@
           <p>Informe o nome do equipamento:</p>
           <input type="text" id="otherName" />
         </div>
-        <input type="file" id="file-step4b" required>
-        <button type="button" onclick="checkAttachmentAndGo('file-step4b', 'Equipamento encaminhado', 'step4b', 'n2', true)">Encaminhar ao N2</button>
+        <button type="button" onclick="checkAttachmentAndGo(null, 'Equipamento encaminhado', 'step4b', 'n2', true)">Encaminhar ao N2</button>
       </div>
       <div class="step" id="step5">
         <p>Como está a qualidade do wi-fi?</p>
         <label><input type="radio" name="wifi" value="Boa"> Boa</label><br>
         <label><input type="radio" name="wifi" value="Média"> Média</label><br>
         <label><input type="radio" name="wifi" value="Ruim"> Ruim</label><br>
-        <input type="file" id="file-step5" required>
         <button type="button" onclick="handleWiFi()">Próximo</button>
       </div>
       <div class="step" id="step6">
         <p>Fez o teste de latência e perda e houve alguma falha?</p>
-        <input type="file" id="file-step6" required>
-        <button type="button" onclick="checkAttachmentAndGo('file-step6','Sim','step6','n2')">Sim</button>
-        <button type="button" onclick="checkAttachmentAndGo('file-step6','Não','step6','step7')">Não</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Sim','step6','n2')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Não','step6','step7')">Não</button>
       </div>
       <div class="step" id="step7">
         <p>Teste de velocidade próximo do contrato do cliente?</p>
-        <input type="file" id="file-step7" required>
-        <button type="button" onclick="checkAttachmentAndGo('file-step7','Sim','step7','final')">Sim</button>
-        <button type="button" onclick="checkAttachmentAndGo('file-step7','Não','step7','n2')">Não</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Sim','step7','final')">Sim</button>
+        <button type="button" onclick="checkAttachmentAndGo(null,'Não','step7','n2')">Não</button>
       </div>
       <div class="step" id="final">
         <p><strong>Faça a abertura de protocolo aguardando análise e encaminhe ao N2.</strong></p>
@@ -168,12 +161,7 @@
       showNextStep(proximo);
     }
 
-    function checkAttachmentAndGo(fileInputId, resposta, perguntaId, proximo, skipQuestion = false) {
-      const fileInput = document.getElementById(fileInputId);
-      if (!fileInput || !fileInput.files.length) {
-        alert("Anexe um arquivo antes de continuar.");
-        return;
-      }
+    function checkAttachmentAndGo(_, resposta, perguntaId, proximo, skipQuestion = false) {
       if (skipQuestion) {
         respostas.push({ pergunta: perguntaId, resposta: resposta });
         showNextStep(proximo);
@@ -196,9 +184,7 @@
 
     function handleWiFi() {
       const opcao = document.querySelector('input[name="wifi"]:checked');
-      const fileInput = document.getElementById("file-step5");
       if (!opcao) return alert("Selecione uma qualidade de Wi-Fi.");
-      if (!fileInput.files.length) return alert("Anexe um arquivo antes de continuar.");
       respostas.push({ pergunta: "Qualidade do Wi-Fi:", resposta: opcao.value });
       showNextStep('step6');
     }
