@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Possíveis Senhas de Roteadores da BJ</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #1a4b8c;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+        
+        .router-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .router-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .router-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .antena-card .card-header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .separator {
+            border-top: 3px solid #e74c3c;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .separator-text {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .credentials-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .credentials-table th {
+            background: var(--light);
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .credentials-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .credentials-table td:hover {
+            background-color: #f5f9ff;
+        }
+        
+        .copyable {
+            position: relative;
+            padding-right: 25px;
+        }
+        
+        .copyable::after {
+            content: "📋";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .copyable:hover::after {
+            opacity: 1;
+        }
+        
+        .copyable.copied {
+            background-color: #e8f5e9;
+            color: var(--success);
+        }
+        
+        .copyable.copied::after {
+            content: "✅";
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .router-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Possíveis Senhas de Roteadores da BJ</h1>
+        </header>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Digite o modelo do roteador para filtrar...">
+        </div>
+        
+        <div class="router-grid" id="routerGrid">
+            <!-- POSIÇÃO 1: TP-LINK -->
+            <div class="router-card" data-model="tp-link">
+                <div class="card-header">TP-LINK</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 2: D-LINK -->
+            <div class="router-card" data-model="d-link">
+                <div class="card-header">D-LINK</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 3: Tenda ou KEO -->
+            <div class="router-card" data-model="tenda keo">
+                <div class="card-header">Tenda ou KEO</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 4: Huawei -->
+            <div class="router-card" data-model="huawei">
+                <div class="card-header">Huawei</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="Epadmin">Epadmin</td>
+                            <td class="copyable" data-text="adminEp">adminEp</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="telecomadmin">telecomadmin</td>
+                            <td class="copyable" data-text="admintelecom">admintelecom</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="Epuser">Epuser</td>
+                            <td class="copyable" data-text="userEp">userEp</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="Epuser">Epuser</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 5: Zyxel ou ZTE -->
+            <div class="router-card" data-model="zyxel zte">
+                <div class="card-header">Zyxel ou ZTE</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="multipro">multipro</td>
+                            <td class="copyable" data-text="multipro">multipro</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="multipro">multipro</td>
+                            <td class="copyable" data-text="multipro123">multipro123</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 6: Mercusys -->
+            <div class="router-card" data-model="mercusys">
+                <div class="card-header">Mercusys</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler123">crawler123</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 7: Stavix/Unee -->
+            <div class="router-card" data-model="stavix unee">
+                <div class="card-header">Stavix/Unee</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="unee123">unee123</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="root">root</td>
+                            <td class="copyable" data-text="Changeme_123">Changeme_123</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin/root">admin/root</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 8: Maxprint -->
+            <div class="router-card" data-model="maxprint">
+                <div class="card-header">Maxprint</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="telecom">telecom</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="telecom">telecom</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="telecom">telecom</td>
+                            <td class="copyable" data-text="admintelecom">admintelecom</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="Epadmin">Epadmin</td>
+                            <td class="copyable" data-text="adminEp">adminEp</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="adminisp">adminisp</td>
+                            <td class="copyable" data-text="adminisp">adminisp</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 9: Raisecom ou Michigan -->
+            <div class="router-card" data-model="raisecom michigan">
+                <div class="card-header">Raisecom ou Michigan</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="superadmin">superadmin</td>
+                            <td class="copyable" data-text="q!w@e#">q!w@e#</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="telecomadmin">telecomadmin</td>
+                            <td class="copyable" data-text="cHI*mA868#558">cHI*mA868#558</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 10: Vazia (espaço reservado) -->
+            <div class="router-card" style="visibility: hidden;"></div>
+            
+            <!-- POSIÇÃO 11: Vazia (espaço reservado) -->
+            <div class="router-card" style="visibility: hidden;"></div>
+            
+            <!-- POSIÇÃO 12: Intelbras -->
+            <div class="router-card" data-model="intelbras">
+                <div class="card-header">Intelbras</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="intelbras">intelbras</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="bjfibra">bjfibra</td>
+                            <td class="copyable" data-text="BjF1bra-l@nif">BjF1bra-l@nif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Separador para as antenas -->
+        <div class="separator">
+            <div class="separator-text">ANTENAS</div>
+        </div>
+        
+        <div class="router-grid" id="antenasGrid">
+            <!-- POSIÇÃO 1: Antenas Ubiquiti (MOVIDA PARA POSIÇÃO 4) -->
+            <div class="router-card antena-card" data-model="ubiquiti antena">
+                <div class="card-header">Antenas Ubiquiti</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="ubnt">ubnt</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="ubnt">ubnt</td>
+                            <td class="copyable" data-text="ubnt">ubnt</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- POSIÇÃO 2: Vazia -->
+            <div class="router-card" style="visibility: hidden;"></div>
+            
+            <!-- POSIÇÃO 3: Vazia -->
+            <div class="router-card" style="visibility: hidden;"></div>
+            
+            <!-- POSIÇÃO 4: Antenas Intelbras -->
+            <div class="router-card antena-card" data-model="intelbras antena">
+                <div class="card-header">Antenas Intelbras</div>
+                <table class="credentials-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Senha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="crawler">crawler</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="bjfibra@2021">bjfibra@2021</td>
+                        </tr>
+                        <tr>
+                            <td class="copyable" data-text="admin">admin</td>
+                            <td class="copyable" data-text="admin">admin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Desenvolvido pelo Brendal</p>
+        </footer>
+    </div>
+
+    <script>
+        // Função de filtro
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.router-card');
+            
+            cards.forEach(card => {
+                const model = card.getAttribute('data-model');
+                if (model.includes(searchTerm) || searchTerm === '') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Função de cópia ao clicar no usuário ou senha
+        document.querySelectorAll('.copyable').forEach(element => {
+            element.addEventListener('click', function() {
+                const textToCopy = this.getAttribute('data-text');
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // Feedback visual
+                    this.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        this.classList.remove('copied');
+                    }, 1500);
+                }).catch(err => {
+                    console.error('Erro ao copiar: ', err);
+                    alert('Não foi possível copiar. Tente selecionar e copiar manualmente.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
