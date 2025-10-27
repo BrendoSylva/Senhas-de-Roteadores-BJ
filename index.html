@@ -46,28 +46,6 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .search-box {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        .search-input:focus {
-            border-color: var(--secondary);
-            outline: none;
-        }
-        
         .router-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -196,10 +174,6 @@
         <header>
             <h1>Possíveis Senhas de Roteadores da BJ</h1>
         </header>
-        
-        <div class="search-box">
-            <input type="text" class="search-input" placeholder="Digite o modelo do roteador para filtrar...">
-        </div>
         
         <div class="router-grid" id="routerGrid">
             <!-- POSIÇÃO 1: TP-LINK -->
@@ -541,7 +515,10 @@
         </div>
         
         <div class="router-grid" id="antenasGrid">
-            <!-- POSIÇÃO 2: Antenas Ubiquiti (MOVIDA PARA POSIÇÃO 4) -->
+            <!-- POSIÇÃO 1: Vazia -->
+            <div class="router-card" style="visibility: hidden;"></div>
+            
+            <!-- POSIÇÃO 2: Antenas Ubiquiti -->
             <div class="router-card antena-card" data-model="ubiquiti antena">
                 <div class="card-header">Antenas Ubiquiti</div>
                 <table class="credentials-table">
@@ -567,12 +544,6 @@
                     </tbody>
                 </table>
             </div>
-            
-            <!-- POSIÇÃO 1: Vazia -->
-            <div class="router-card" style="visibility: hidden;"></div>
-            
-            <!-- POSIÇÃO 4: Vazia -->
-            <div class="router-card" style="visibility: hidden;"></div>
             
             <!-- POSIÇÃO 3: Antenas Intelbras -->
             <div class="router-card antena-card" data-model="intelbras antena">
@@ -600,6 +571,9 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- POSIÇÃO 4: Vazia -->
+            <div class="router-card" style="visibility: hidden;"></div>
         </div>
         
         <footer>
@@ -608,21 +582,6 @@
     </div>
 
     <script>
-        // Função de filtro
-        document.querySelector('.search-input').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.router-card');
-            
-            cards.forEach(card => {
-                const model = card.getAttribute('data-model');
-                if (model.includes(searchTerm) || searchTerm === '') {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-        
         // Função de cópia ao clicar no usuário ou senha
         document.querySelectorAll('.copyable').forEach(element => {
             element.addEventListener('click', function() {
@@ -643,5 +602,4 @@
         });
     </script>
 </body>
-
 </html>
