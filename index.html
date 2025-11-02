@@ -27,11 +27,26 @@
             color: #333;
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Canvas de fundo */
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #1a4b8c;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         header {
@@ -59,6 +74,8 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
         
         .router-card:hover {
@@ -170,6 +187,9 @@
     </style>
 </head>
 <body>
+    <!-- Canvas para o efeito de fundo -->
+    <canvas id="backgroundCanvas"></canvas>
+    
     <div class="container">
         <header>
             <h1>Possíveis Senhas de Roteadores da BJ</h1>
@@ -582,7 +602,139 @@
     </div>
 
     <script>
-        // Função de cópia ao clicar no usuário ou senha
+        // ===== EFEITO DE FUNDO COM PONTOS E LINHAS =====
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Configurações do efeito
+        let points = [];
+        const mouse = { x: null, y: null, radius: 150 };
+        const pointCount = 80;
+        const connectionDistance = 150;
+
+        // Configurar canvas
+        function setupCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            createPoints();
+        }
+
+        // Criar pontos
+        function createPoints() {
+            points = [];
+            for (let i = 0; i < pointCount; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 1.5 + 0.5,
+                    originalRadius: Math.random() * 1.5 + 0.5
+                });
+            }
+        }
+
+        // Atualizar pontos
+        function updatePoints() {
+            points.forEach(point => {
+                // Movimento básico
+                point.x += point.vx;
+                point.y += point.vy;
+
+                // Rebater nas bordas
+                if (point.x < 0 || point.x > canvas.width) point.vx *= -1;
+                if (point.y < 0 || point.y > canvas.height) point.vy *= -1;
+
+                // Interação com o mouse
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = point.x - mouse.x;
+                    const dy = point.y - mouse.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const angle = Math.atan2(dy, dx);
+                        
+                        point.vx += Math.cos(angle) * force * 0.5;
+                        point.vy += Math.sin(angle) * force * 0.5;
+                        
+                        // Aumentar raio próximo ao mouse
+                        point.radius = point.originalRadius * (1 + force * 2);
+                    } else {
+                        point.radius = point.originalRadius;
+                    }
+                }
+
+                // Limitar velocidade
+                const speed = Math.sqrt(point.vx * point.vx + point.vy * point.vy);
+                if (speed > 2) {
+                    point.vx = (point.vx / speed) * 2;
+                    point.vy = (point.vy / speed) * 2;
+                }
+            });
+        }
+
+        // Desenhar pontos e linhas
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Desenhar linhas primeiro
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 0.5;
+            
+            for (let i = 0; i < points.length; i++) {
+                for (let j = i + 1; j < points.length; j++) {
+                    const dx = points[i].x - points[j].x;
+                    const dy = points[i].y - points[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < connectionDistance) {
+                        const opacity = 1 - (distance / connectionDistance);
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.2})`;
+                        ctx.beginPath();
+                        ctx.moveTo(points[i].x, points[i].y);
+                        ctx.lineTo(points[j].x, points[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            // Desenhar pontos
+            points.forEach(point => {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Loop de animação
+        function animate() {
+            updatePoints();
+            draw();
+            requestAnimationFrame(animate);
+        }
+
+        // Event listeners
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        window.addEventListener('resize', () => {
+            setupCanvas();
+        });
+
+        // Inicializar
+        setupCanvas();
+        animate();
+
+        // ===== FUNÇÃO DE CÓPIA ORIGINAL =====
         document.querySelectorAll('.copyable').forEach(element => {
             element.addEventListener('click', function() {
                 const textToCopy = this.getAttribute('data-text');
