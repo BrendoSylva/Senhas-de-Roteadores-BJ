@@ -55,9 +55,12 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
+        
+            align-items: start;
         }
         
         .router-card {
+            align-self: start;
             background: white;
             border-radius: 10px;
             overflow: hidden;
@@ -171,7 +174,7 @@
             right: 30px;
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #f39c12, #d35400);
+            background: linear-gradient(135deg, #3498db, #1f4ed8);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -201,13 +204,13 @@
         
         @keyframes pulse {
             0% {
-                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
             }
             70% {
-                box-shadow: 0 0 0 15px rgba(243, 156, 18, 0);
+                box-shadow: 0 0 0 15px rgba(52, 152, 219, 0);
             }
             100% {
-                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+                box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
             }
         }
         
@@ -270,6 +273,54 @@
             width: 100%;
             height: 100%;
         }
+
+        /* ===== OCULTAR CREDENCIAIS (ABRE NO HEADER) + CADEADO + AUTO-FECHA ===== */
+        /* Header clicável com cadeado */
+        .card-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Ícone do cadeado */
+        .lock-icon {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        /* Esconder credenciais inicialmente */
+        .credentials-table {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* ===== CONTADOR REGRESSIVO NO HEADER + ANIMAÇÃO DO CADEADO ===== */
+        .countdown {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-left: 4px;
+            user-select: none;
+        }
+
+        .lock-icon.open {
+            animation: lockPop 0.35s ease;
+        }
+
+        @keyframes lockPop {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.25) rotate(-10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
 </style>
 </head>
 <body>
@@ -911,6 +962,165 @@ this.ctx.globalAlpha = 1;
 
         // Inicializar animação de fundo
         const rainAnim = new RainThunderAnimation('rainCanvas');
+
+
+// ===== SISTEMA (FORÇADO) - ABRE SOMENTE O CARD CLICADO + CONTADOR 45s + ANIMAÇÃO DO CADEADO =====
+(function () {
+
+    const CLOSE_TIME = 45000; // 45 segundos
+    const TICK_MS = 250;      // atualização suave (mostra inteiro no header)
+
+    let activeCard = null;
+    let activeTimer = null;
+    let activeInterval = null;
+    let closeAt = 0;
+
+    function ensureHeaderExtras(card) {
+        const header = card.querySelector('.card-header');
+        if (!header) return;
+
+        // Cadeado
+        let lock = header.querySelector('.lock-icon');
+        if (!lock) {
+            lock = document.createElement("span");
+            lock.className = "lock-icon";
+            lock.textContent = "🔒";
+            header.appendChild(lock);
+        }
+
+        // Contador
+        let cd = header.querySelector('.countdown');
+        if (!cd) {
+            cd = document.createElement("span");
+            cd.className = "countdown";
+            cd.textContent = ""; // só aparece quando abrir
+            header.appendChild(cd);
+        }
+    }
+
+    function setLock(card, state) {
+        const header = card.querySelector('.card-header');
+        if (!header) return;
+        const lock = header.querySelector('.lock-icon');
+        if (!lock) return;
+
+        if (state === 'open') {
+            lock.textContent = "🔓";
+            lock.classList.remove('open'); // retrigger animação
+            // força reflow para reiniciar animação
+            void lock.offsetWidth;
+            lock.classList.add('open');
+        } else {
+            lock.textContent = "🔒";
+            lock.classList.remove('open');
+        }
+    }
+
+    function setCountdown(card, secondsOrEmpty) {
+        const header = card.querySelector('.card-header');
+        if (!header) return;
+        const cd = header.querySelector('.countdown');
+        if (!cd) return;
+        cd.textContent = secondsOrEmpty;
+    }
+
+    function hideTable(card) {
+        const table = card.querySelector('.credentials-table');
+        if (table) table.style.display = "none"; // FORÇA inline
+        setLock(card, 'closed');
+        setCountdown(card, "");
+    }
+
+    function showTable(card) {
+        const table = card.querySelector('.credentials-table');
+        if (table) table.style.display = "table"; // FORÇA inline
+        setLock(card, 'open');
+    }
+
+    function clearTimers() {
+        if (activeTimer) clearTimeout(activeTimer);
+        if (activeInterval) clearInterval(activeInterval);
+        activeTimer = null;
+        activeInterval = null;
+    }
+
+    function closeActive() {
+        if (!activeCard) return;
+        hideTable(activeCard);
+        clearTimers();
+        activeCard = null;
+        closeAt = 0;
+    }
+
+    function startCountdown(card) {
+        clearTimers();
+        closeAt = Date.now() + CLOSE_TIME;
+
+        // atualiza imediatamente
+        const remainingSec = Math.ceil((closeAt - Date.now()) / 1000);
+        setCountdown(card, `⏳ ${remainingSec}s`);
+
+        activeInterval = setInterval(() => {
+            if (!activeCard) return;
+            const msLeft = closeAt - Date.now();
+            const secLeft = Math.max(0, Math.ceil(msLeft / 1000));
+            setCountdown(activeCard, `⏳ ${secLeft}s`);
+        }, TICK_MS);
+
+        activeTimer = setTimeout(() => {
+            closeActive();
+        }, CLOSE_TIME);
+    }
+
+    // Inicialização: garante que TODAS comecem fechadas (mesmo se CSS falhar)
+    document.querySelectorAll('.router-card').forEach(card => {
+        const header = card.querySelector('.card-header');
+        const table = card.querySelector('.credentials-table');
+        if (!header || !table) return;
+
+        ensureHeaderExtras(card);
+        table.style.display = "none";
+        setLock(card, 'closed');
+        setCountdown(card, "");
+    });
+
+    document.querySelectorAll('.router-card').forEach(card => {
+
+        const header = card.querySelector('.card-header');
+        const table = card.querySelector('.credentials-table');
+        if (!header || !table) return;
+
+        ensureHeaderExtras(card);
+
+        header.addEventListener('click', function (ev) {
+
+            // Fecha TODAS as outras SEMPRE
+            document.querySelectorAll('.router-card').forEach(c => {
+                if (c !== card) hideTable(c);
+            });
+
+            const isOpen = table.style.display === "table";
+
+            if (!isOpen) {
+                showTable(card);
+                activeCard = card;
+
+                // ⚡ Raio ao abrir
+                if (typeof rainAnim !== 'undefined') {
+                    rainAnim.strikeAt(ev.clientX || window.innerWidth / 2);
+                }
+            } else {
+                // já está aberto -> mantém aberto e reinicia timer
+                activeCard = card;
+            }
+
+            // reinicia contador/auto-fechamento
+            startCountdown(card);
+        });
+
+    });
+
+})();
 
 // ===== FUNÇÃO DE CÓPIA ORIGINAL =====
         document.querySelectorAll('.copyable').forEach(element => {
