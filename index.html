@@ -125,16 +125,6 @@
       animation: loadfill 1.25s ease forwards;
     }
     @keyframes loadfill{ to{ width: 100%; } }
-
-    .loader-flash{
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.0);
-      pointer-events: none;
-      animation: flashBoom 1.25s ease forwards;
-    }
-    @keyframes flashBoom{
-      0%   { background: rgba(255,255,255,0.00); }
       18%  { background: rgba(255,255,255,0.00); }
       22%  { background: rgba(255,255,255,0.55); }
       28%  { background: rgba(255,255,255,0.08); }
@@ -144,19 +134,6 @@
     }
     .loader-hide{ animation: fadeOut .35s ease forwards; }
     @keyframes fadeOut{ to{ opacity:0; visibility:hidden; } }
-
-    /* Fundo chuva */
-    .rain-container{
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background: transparent;
-    }
-    #rainCanvas{
-      display:block;
-      width:100%;
-      height:100%;
-    }
 
     /* HEADER */
     header{
@@ -486,18 +463,7 @@
       50%{ transform: scale(1.04); }
       100%{ transform: scale(1); }
     }
-.help-button{
-      
-    }
-    20%  { transform: scale(0.92); }
-      40%  { transform: scale(1.12); }
-      60%  { transform: scale(0.96); }
-      80%  { transform: scale(1.08); }
-      100% { transform: scale(1); }
-    }
-      50%{ transform: scale(1.06); }
-      100%{ transform: scale(1); }
-    }
+
     .help-button:hover{ transform: scale(1.08); }
     .help-button:active{ transform: scale(0.98); }
     .help-button img.help-icon{ width: 60%; height: 60%; }
@@ -506,24 +472,31 @@
       .router-grid{ grid-template-columns: 1fr; }
       h1{ font-size: 1.9rem; }
     }
-  </style>
+  
+    /* Fundo animado (pontos e linhas) - leve */
+    #particles-bg{
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3; /* atrás do conteúdo e do fundo */
+      pointer-events: none;
+    }
+
+</style>
 </head>
 
 <body>
-  <div class="loader-overlay" id="loader">
-    <div class="loader-flash"></div>
-    <div class="loader-card">
+  
+  <div id=\"particles-bg\" aria-hidden=\"true\"></div>
+<div class="loader-overlay" id="loader">
+<div class="loader-card">
       <div class="loader-title">Inicializando...</div>
       <div class="loader-sub">Carregando ambiente</div>
       <div class="loader-bar"><span></span></div>
     </div>
   </div>
-
-  <div class="rain-container" aria-hidden="true">
-    <canvas id="rainCanvas"></canvas>
-  </div>
-
-  <div class="help-button" id="helpButton" title="Clique para abrir o suporte">
+<div class="help-button" id="helpButton" title="Clique para abrir o suporte">
     <img src="simbolo-de-ajuda.png" class="help-icon" alt="Ajuda">
   </div>
 
@@ -754,266 +727,10 @@
   </div>
 
   <script>
-    class RainThunderAnimation {
-      constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext('2d');
-        this.raindrops = [];
-        this.splashes = [];
-        this.riverParticles = [];
-        this.wind = 0;
-        this.windTarget = 0;
-        this.windChangeTimer = 0;
-        this.lightning = null;
-        this.thunderTime = 0;
-        this.animationId = null;
-        this.t = 0;
-        this.init();
-      }
-      init() {
-        this.resizeCanvas();
-        this.initializeRaindrops();
-        this.initializeRiver();
-        this.animate();
-        window.addEventListener('resize', () => this.resizeCanvas());
-      }
-      resizeCanvas() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.initializeRaindrops();
-        this.initializeRiver();
-      }
-      initializeRaindrops() {
-        this.raindrops = [];
-        this.splashes = [];
-        this.wind = 0;
-        this.windTarget = 0;
-        this.windChangeTimer = 0;
-
-        const dropCount = Math.floor((this.canvas.width * this.canvas.height) / 8000);
-        for (let i = 0; i < dropCount; i++) {
-          this.raindrops.push({
-            x: Math.random() * this.canvas.width,
-            y: Math.random() * this.canvas.height,
-            length: Math.random() * 8 + 4,
-            opacity: Math.random() * 0.3 + 0.2,
-            speed: Math.random() * 2 + 2
-          });
-        }
-      }
-      initializeRiver() {
-        this.riverParticles = [];
-        const count = Math.floor(this.canvas.width / 14);
-        for (let i = 0; i < count; i++) {
-          this.riverParticles.push({
-            x: Math.random() * this.canvas.width,
-            r: 0.7 + Math.random() * 1.6,
-            a: 0.18 + Math.random() * 0.22,
-            v: 1.0 + Math.random() * 2.2,
-            wobble: Math.random() * Math.PI * 2
-          });
-        }
-      }
-      generateLightning(x, y) {
-        const segments = [{ x, y }];
-        let currentX = x;
-        let currentY = y;
-        while (currentY < this.canvas.height) {
-          const offsetX = (Math.random() - 0.5) * 40;
-          const offsetY = Math.random() * 60 + 20;
-          currentX += offsetX;
-          currentY += offsetY;
-          currentX = Math.max(0, Math.min(this.canvas.width, currentX));
-          segments.push({ x: currentX, y: currentY });
-        }
-        return segments;
-      }
-      createSplash(x, y, intensity = 1) {
-        const count = Math.floor(6 + 8 * intensity);
-        for (let i = 0; i < count; i++) {
-          this.splashes.push({
-            x, y,
-            vx: (Math.random() - 0.5) * (3.2 * intensity),
-            vy: -Math.random() * (3.0 * intensity),
-            life: 18 + Math.random() * 12,
-            r: 0.8 + Math.random() * 1.6
-          });
-        }
-      }
-      strikeAt(x) {
-        const clampedX = Math.max(0, Math.min(this.canvas.width, x));
-        this.lightning = {
-          segments: this.generateLightning(clampedX, 0),
-          brightness: 1
-        };
-        this.thunderTime = Date.now();
-      }
-      drawRiver() {
-        const ctx = this.ctx;
-        const w = this.canvas.width;
-        const h = this.canvas.height;
-
-        const riverH = Math.max(46, Math.floor(h * 0.055)); // mais baixa (faixa fina)
-        const top = h - riverH;
-        const isLight = document.body.classList.contains('theme-light');
-
-        const g = ctx.createLinearGradient(0, top, 0, h);
-        if (!isLight) {
-          g.addColorStop(0, 'rgba(30, 70, 120, 0.08)');
-          g.addColorStop(0.55, 'rgba(20, 50, 90, 0.14)');
-          g.addColorStop(1, 'rgba(10, 25, 45, 0.22)');
-        } else {
-          g.addColorStop(0, 'rgba(40, 110, 170, 0.05)');
-          g.addColorStop(0.55, 'rgba(40, 110, 170, 0.08)');
-          g.addColorStop(1, 'rgba(20, 70, 120, 0.12)');
-        }
-        ctx.fillStyle = g;
-        ctx.fillRect(0, top, w, riverH);
-
-        // ondas
-        ctx.globalAlpha = isLight ? 0.16 : 0.18;
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = isLight ? 'rgba(20, 70, 120, 0.85)' : 'rgba(220, 235, 255, 0.85)';
-
-        for (let k = 0; k < 5; k++) {
-          const y = top + 14 + k * 12;
-          ctx.beginPath();
-          for (let x = 0; x <= w; x += 14) {
-            const wave = Math.sin((x * 0.015) + (this.t * 0.035) + k) * (2.1 + k * 0.10);
-            const drift = (this.wind * 1.2);
-            ctx.lineTo(x + drift, y + wave);
-          }
-          ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-
-        // espuma
-        for (const p of this.riverParticles) {
-          const yy = top + riverH * 0.42 + Math.sin(this.t * 0.03 + p.wobble) * (riverH * 0.14);
-          p.x += (p.v + this.wind * 0.55);
-          if (p.x > w + 20) p.x = -20;
-
-          ctx.globalAlpha = p.a;
-          ctx.fillStyle = isLight ? 'rgba(255,255,255,0.92)' : 'rgba(220, 235, 255, 0.92)';
-          ctx.beginPath();
-          ctx.arc(p.x, yy, p.r, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        }
-
-        // borda superior
-        ctx.globalAlpha = isLight ? 0.12 : 0.14;
-        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        for (let x = 0; x <= w; x += 18) {
-          const wave = Math.sin((x * 0.018) + (this.t * 0.05)) * 2.4;
-          ctx.lineTo(x, top + wave);
-        }
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-      }
-      animate = () => {
-        const width = this.canvas.width;
-        const height = this.canvas.height;
-        this.t += 1;
-
-        this.windChangeTimer++;
-        if (this.windChangeTimer > 120) {
-          this.windTarget = (Math.random() - 0.5) * 2;
-          this.windChangeTimer = 0;
-        }
-        this.wind += (this.windTarget - this.wind) * 0.02;
-
-        const isLight = document.body.classList.contains('theme-light');
-        this.ctx.fillStyle = isLight ? 'rgba(242, 245, 255, 0.14)' : 'rgba(15, 19, 32, 0.08)';
-        this.ctx.fillRect(0, 0, width, height);
-
-        this.ctx.strokeStyle = isLight ? 'rgba(40, 70, 120, 0.35)' : 'rgba(220, 235, 255, 0.55)';
-        this.ctx.lineWidth = 1;
-        this.ctx.lineCap = 'round';
-
-        this.raindrops.forEach((drop) => {
-          this.ctx.globalAlpha = drop.opacity;
-          this.ctx.beginPath();
-          this.ctx.moveTo(drop.x, drop.y);
-          this.ctx.lineTo(drop.x - this.wind * 2, drop.y + drop.length);
-          this.ctx.stroke();
-
-          drop.y += drop.speed;
-          drop.x += this.wind;
-
-          if (drop.y > height) {
-            const intensity = Math.min(2, Math.max(0.6, drop.speed / 6));
-            this.createSplash(drop.x, height - 2, intensity);
-            drop.y = -drop.length;
-            drop.x = Math.random() * width;
-          }
-        });
-
-        this.ctx.fillStyle = isLight ? 'rgba(40, 70, 120, 0.35)' : 'rgba(220, 235, 255, 0.6)';
-        for (let i = this.splashes.length - 1; i >= 0; i--) {
-          const p = this.splashes[i];
-          p.x += p.vx + this.wind * 0.5;
-          p.y += p.vy;
-          p.vy += 0.18;
-          p.life -= 1;
-
-          this.ctx.globalAlpha = Math.max(0, p.life / 30);
-          this.ctx.beginPath();
-          this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          this.ctx.fill();
-
-          if (p.life <= 0) this.splashes.splice(i, 1);
-        }
-        this.ctx.globalAlpha = 1;
-
-        this.drawRiver();
-
-        if (this.lightning) {
-          const timeSinceStrike = Date.now() - this.thunderTime;
-          const flashDuration = 170;
-
-          if (timeSinceStrike < flashDuration) {
-            this.ctx.strokeStyle = `rgba(255, 255, 210, ${this.lightning.brightness})`;
-            this.ctx.lineWidth = 3;
-            this.ctx.lineCap = 'round';
-            this.ctx.lineJoin = 'round';
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.lightning.segments[0].x, this.lightning.segments[0].y);
-            this.lightning.segments.forEach((s) => this.ctx.lineTo(s.x, s.y));
-            this.ctx.stroke();
-
-            this.ctx.strokeStyle = `rgba(255, 210, 120, ${this.lightning.brightness * 0.25})`;
-            this.ctx.lineWidth = 10;
-            this.ctx.globalAlpha = 0.25;
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.lightning.segments[0].x, this.lightning.segments[0].y);
-            this.lightning.segments.forEach((s) => this.ctx.lineTo(s.x, s.y));
-            this.ctx.stroke();
-            this.ctx.globalAlpha = 1;
-
-            const flashIntensity = Math.max(0, 1 - timeSinceStrike / flashDuration);
-            this.ctx.fillStyle = `rgba(255, 230, 160, ${flashIntensity * 0.12})`;
-            this.ctx.fillRect(0, 0, width, height);
-
-            this.lightning.brightness = Math.max(0, 1 - timeSinceStrike / flashDuration);
-          } else {
-            this.lightning = null;
-          }
-        }
-
-        requestAnimationFrame(this.animate);
-      };
-    }
-
-    const rainAnim = new RainThunderAnimation('rainCanvas');
-
     (function(){
       const loader = document.getElementById('loader');
-      setTimeout(() => { rainAnim.strikeAt(window.innerWidth * 0.5); }, 260);
+      setTimeout(() => {
+}, 260);
       setTimeout(() => {
         loader.classList.add('loader-hide');
         setTimeout(() => loader.remove(), 380);
@@ -1126,8 +843,7 @@
           if (!isOpen){
             showTable(card);
             activeCard = card;
-            rainAnim.strikeAt(ev.clientX || window.innerWidth/2);
-          } else {
+} else {
             activeCard = card;
           }
 
@@ -1139,8 +855,7 @@
     document.querySelectorAll('.copyable').forEach(el=>{
       el.addEventListener('click', function(ev){
         const textToCopy = this.getAttribute('data-text') || "";
-        rainAnim.strikeAt(ev.clientX || (Math.random() * window.innerWidth));
-        navigator.clipboard.writeText(textToCopy).then(()=>{
+navigator.clipboard.writeText(textToCopy).then(()=>{
           this.classList.add('copied');
           setTimeout(()=> this.classList.remove('copied'), 1400);
         }).catch(()=>{
@@ -1179,5 +894,68 @@
       window.open('https://megalinktelecom.bitrix24.com.br/online/', '_blank');
     });
   </script>
+
+  <!-- Fundo animado leve (pontos e linhas) -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+  <script>
+    (function(){
+      function startParticles(){
+        if (!window.tsParticles) return;
+        tsParticles.load("particles-bg", {
+          fpsLimit: 30,
+          detectRetina: false,
+          background: { color: { value: "transparent" } },
+          particles: {
+            number: { value: 55, density: { enable: true, area: 900 } },
+            color: { value: "#ffffff" },
+            opacity: { value: 0.5 },
+            size: { value: 2, random: { enable: true, minimumValue: 1 } },
+            links: { enable: true, distance: 120, color: "#ffffff", opacity: 0.2, width: 1 },
+            move: { enable: true, speed: 0.6, direction: "none", outModes: { default: "out" } }
+          },
+          
+interactivity: {
+  events: {
+    onHover: { enable: true, mode: ["grab","bubble"] },
+    onClick: { enable: false },
+    resize: true
+  },
+  modes: {
+    grab: {
+      distance: 130,
+      links: {
+        opacity: 0.7,
+        color: "#66ccff"
+      }
+    },
+    bubble: {
+      distance: 120,
+      size: 3.5,
+      opacity: 0.9,
+      duration: 0.3
+    }
+  }
+}
+
+        });
+      }// inicia após carregar (evita disputar com o loader)
+      if (document.readyState === "complete" || document.readyState === "interactive") {
+        setTimeout(startParticles, 50);
+      } else {
+        document.addEventListener("DOMContentLoaded", function(){ setTimeout(startParticles, 50); });
+      }
+
+      // pausa quando a aba não está visível (economiza CPU)
+      document.addEventListener("visibilitychange", function(){
+        if (!window.tsParticles) return;
+        if (document.hidden) {
+          try { tsParticles.pause(); } catch(e){}
+        } else {
+          try { tsParticles.play(); } catch(e){}
+        }
+      });
+    })();
+  </script>
+
 </body>
 </html>
