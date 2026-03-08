@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Possíveis Senhas de Roteadores da BJ</title>
+  <title>Possíveis Senhas de Roteadores BJ</title>
 
   <style>
     :root{
@@ -25,25 +25,6 @@
       --glow-strong: rgba(255, 230, 160, 0.75);
 
       --radius2: 18px;
-    }
-
-    body.theme-light{
-      --bg-1:#eef3ff;
-      --bg-2:#dfe9ff;
-      --text:#0f1a2b;
-      --muted:rgba(15,26,43,.70);
-
-      --glass: rgba(255,255,255,0.70);
-      --glass-strong: rgba(255,255,255,0.82);
-      --stroke: rgba(15,26,43,0.14);
-
-      --shadow: 0 10px 26px rgba(15,26,43,0.16);
-      --shadow-soft: 0 6px 18px rgba(15,26,43,0.12);
-
-      --rowHover: rgba(15,26,43,0.06);
-
-      --glow: rgba(255, 170, 90, 0.35);
-      --glow-strong: rgba(255, 170, 90, 0.55);
     }
 
     *{
@@ -198,9 +179,6 @@
       background: linear-gradient(90deg, rgba(255,255,255,0.30), transparent);
       border-radius: 999px;
       opacity: .7;
-    }
-    body.theme-light .section-title .line{
-      background: linear-gradient(90deg, rgba(15,26,43,0.22), transparent);
     }
 
     /* GRID */
@@ -357,10 +335,6 @@
       background: rgba(39,174,96,0.16);
       color: rgba(170,255,210,0.95);
     }
-    body.theme-light .copyable.copied{
-      background: rgba(39,174,96,0.14);
-      color: #0f3a22;
-    }
     .copyable.copied::after{ content:"✅"; opacity:1; }
 
     /* Separador antenas */
@@ -389,14 +363,6 @@
       user-select:none;
       box-shadow: var(--shadow-soft);
       text-transform: uppercase;
-    }
-    body.theme-light .separator{
-      background: linear-gradient(90deg, transparent, rgba(255,170,90,0.75), transparent);
-      box-shadow: 0 0 18px rgba(255,170,90,0.18);
-    }
-    body.theme-light .separator-text{
-      background: rgba(255,170,90,0.22);
-      border: 1px solid rgba(255,170,90,0.28);
     }
 
     footer{
@@ -503,12 +469,6 @@
   <div class="container">
     <header>
       <h1>Possíveis Senhas de Roteadores da BJ</h1>
-
-      <div class="controls">
-        <button class="btn" id="themeToggle" type="button" title="Alternar modo">
-          🌙 <span id="themeText">Escuro</span>
-        </button>
-      </div>
     </header>
 
     <div class="section-title">
@@ -863,32 +823,6 @@ navigator.clipboard.writeText(textToCopy).then(()=>{
         });
       });
     });
-
-    (function(){
-      const btn = document.getElementById('themeToggle');
-      const txt = document.getElementById('themeText');
-      const saved = localStorage.getItem('noc_theme');
-
-      function apply(theme){
-        if (theme === 'light'){
-          document.body.classList.add('theme-light');
-          btn.firstChild.textContent = "☀️";
-          txt.textContent = "Claro";
-        } else {
-          document.body.classList.remove('theme-light');
-          btn.firstChild.textContent = "🌙";
-          txt.textContent = "Escuro";
-        }
-        localStorage.setItem('noc_theme', theme);
-      }
-
-      apply(saved || 'dark');
-
-      btn.addEventListener('click', ()=>{
-        const isLight = document.body.classList.contains('theme-light');
-        apply(isLight ? 'dark' : 'light');
-      });
-    })();
 
     document.getElementById('helpButton').addEventListener('click', function(){
       window.open('https://megalinktelecom.bitrix24.com.br/online/', '_blank');
